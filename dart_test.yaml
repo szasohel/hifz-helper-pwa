@@ -1,0 +1,3 @@
+# Copied integration-style VM tests use the same persistent SQLite database.
+# Serialize test files until each fixture has a fully isolated database.
+concurrency: 1

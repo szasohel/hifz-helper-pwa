@@ -1,0 +1,59 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Analyze PWA",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"analyze",
+				"--no-fatal-infos"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Test PWA",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"test"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"group": "test",
+			"problemMatcher": []
+		},
+		{
+			"label": "Refresh SQLite web runtime",
+			"type": "shell",
+			"command": "dart",
+			"args": [
+				"run",
+				"sqflite_common_ffi_web:setup",
+				"--force"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Build PWA release",
+			"type": "shell",
+			"command": "flutter",
+			"args": [
+				"build",
+				"web",
+				"--release",
+				"--no-web-resources-cdn"
+			],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}
