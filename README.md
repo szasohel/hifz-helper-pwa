@@ -20,6 +20,19 @@ The SQLite runtime refresh task regenerates the worker/WASM pair for the resolve
 
 Do not run native-platform builds or regenerate the native application from this repository. Future upstream changes must be deliberately ported into this fork and re-tested.
 
+## Deploy to Cloudflare Workers
+
+The existing production address is https://hifz-pwa.szasohel.workers.dev. This is a Workers deployment, not a Pages deployment. Keep the same address to retain access to browser-local progress.
+
+1. Run the **Build PWA release** VS Code task.
+2. Deploy the **entire contents** of `build/web`, retaining all subdirectories. For dashboard static-asset uploads, upload the complete folder, or a ZIP of its contents if the upload screen supports ZIP files. The archive root must contain `index.html`, not an enclosing `web` directory.
+3. Alternatively, with Node.js/npm installed, run `npx wrangler@4 login` once and then `npx wrangler@4 deploy` from the repository root. The committed `wrangler.jsonc` uploads `build/web` recursively to the `hifz-pwa` Worker. Build first; Wrangler does not compile Flutter. Select the Cloudflare account that owns the existing Worker.
+4. Verify `/canvaskit/chromium/canvaskit.js`, `/canvaskit/chromium/canvaskit.wasm`, `/icons/Icon-192.png`, and `/assets/FontManifest.json` return HTTP 200 on the deployed origin, then reload the app.
+
+Do not upload only the top-level JavaScript/HTML files or point the upload at the source `web` folder. Missing `canvaskit`, `assets`, or `icons` directories cause startup failures even when the main HTML and JavaScript load. Include `sqflite_sw.js` and its matching `sqlite3.wasm` as well. A redirect to HTML cannot substitute for missing JavaScript or WASM files.
+
+If an old app shell remains after redeploying, try a hard refresh or unregister only the app service worker in browser developer tools. **Do not clear site data, IndexedDB, or local storage**: those contain local progress. Hosting alone does not provide complete offline support or backups.
+
 ## Next implementation milestones
 
 1. Validate real-browser persistence, audio gestures and upstream CORS on Android Chrome and iOS Safari.
