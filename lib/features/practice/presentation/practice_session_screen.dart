@@ -8,6 +8,7 @@ import '../../../app/theme.dart';
 import '../../../core/audio/recitation_player.dart';
 import '../../../core/audio/surah_audio_prefetcher.dart';
 import '../../../core/data/quran_metadata.dart';
+import '../../../core/data/quran_word_tokens.dart';
 import '../../../core/database/app_database.dart';
 import '../../../core/services/quran_sync_service.dart';
 import '../../hifz_engine/models/hifz_tier_model.dart';
@@ -224,21 +225,6 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                           textAlign: TextAlign.center,
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  InkWell(
-                    onTap: () => _playSurah(surahNumber),
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      width: 34,
-                      height: 34,
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryGreen,
-                        shape: BoxShape.circle,
-                      ),
-                      alignment: Alignment.center,
-                      child: const Icon(Icons.play_arrow, color: Colors.white, size: 20),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -461,14 +447,14 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
     });
   }
 
-  void _onWordTapped(int surahNum, int ayahNum, int wordIndex, String word) {
+  void _onWordTapped(int surahNum, int ayahNum, int wordPosition, String word) {
     if (_maskMode != MaskMode.none && !_revealedAyahs.contains(ayahNum)) return;
     final settings = ref.read(settingsProvider);
     WordMeaningSheet.show(
       context,
       surahNumber: surahNum,
       ayahNumber: ayahNum,
-      wordPosition: wordIndex + 1,
+      wordPosition: wordPosition,
       fallbackArabicWord: word,
       activeScript: settings.activeScript,
     );
@@ -540,21 +526,6 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
     final reciter = ref.read(settingsProvider).activeReciter;
     _player.playAyahs([ayah], reciterId: reciter);
     _prefetchReciterAudioForSurah(ayah['surah_number'] as int, reciter);
-  }
-
-  void _playSurah(int surahNumber) {
-    final reciter = ref.read(settingsProvider).activeReciter;
-    final surahAyahs =
-        _ayahs.where((ayah) => ayah['surah_number'] == surahNumber).toList();
-    if (surahAyahs.isEmpty) return;
-    _player.playAyahs(
-      surahAyahs,
-      repsPerAyah: _audioReps,
-      enableUserGap: _audioGap,
-      reciterId: reciter,
-      includeOpeningBasmala: true,
-    );
-    _prefetchReciterAudioForSurah(surahNumber, reciter);
   }
 
   @override
@@ -966,7 +937,7 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
     required bool isActive,
   }) {
     final isMasked = _maskMode != MaskMode.none && !isRevealed;
-    final words = rawArabic.trim().split(RegExp(r'\s+'));
+    final words = tokenizeQuranWords(rawArabic);
 
     Color fluencyColor = Colors.transparent;
     if (fluency == 'strong') {
@@ -1117,9 +1088,12 @@ class _PracticeSessionScreenState extends ConsumerState<PracticeSessionScreen> {
                 spacing: 5,
                 runSpacing: 6,
                 children: List.generate(words.length, (wIdx) {
-                  final word = words[wIdx];
+                  final token = words[wIdx];
+                  final word = token.text;
                   return InkWell(
-                    onTap: () => _onWordTapped(surahNum, ayahNum, wIdx, word),
+                    onTap: token.wordPosition == null
+                        ? null
+                        : () => _onWordTapped(surahNum, ayahNum, token.wordPosition!, word),
                     borderRadius: BorderRadius.circular(6),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(

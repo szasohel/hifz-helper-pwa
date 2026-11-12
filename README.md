@@ -22,6 +22,8 @@ Do not run native-platform builds or regenerate the native application from this
 
 ## Deploy to Cloudflare Workers
 
+The web shell shows a dismissible Home Screen installation guide on iPhone/iPad browsers. It is hidden in standalone mode and remembers dismissal when local storage is available. iOS requires the user to complete the Share → Add to Home Screen steps; the guide cannot open a native install dialog. Real-device verification remains required.
+
 The existing production address is https://hifz-pwa.szasohel.workers.dev. This is a Workers deployment, not a Pages deployment. Keep the same address to retain access to browser-local progress.
 
 1. Run the **Build PWA release** VS Code task.

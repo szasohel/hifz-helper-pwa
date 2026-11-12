@@ -7,9 +7,10 @@ class UmmahApiClient {
 
   UmmahApiClient({http.Client? client}) : _client = client ?? http.Client();
 
+  // Only CORS-safelisted headers: a custom User-Agent forces a preflight that
+  // ummahapi.com rejects, and browsers set User-Agent themselves anyway.
   static const Map<String, String> _headers = {
     'Accept': 'application/json',
-    'User-Agent': 'HifzCompanion/1.0',
   };
 
   /// Fetch list of all 114 Surahs

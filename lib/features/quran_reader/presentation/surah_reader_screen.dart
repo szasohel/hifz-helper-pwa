@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/constants.dart';
 import '../../../app/theme.dart';
 import '../../../core/audio/recitation_player.dart';
+import '../../../core/data/quran_word_tokens.dart';
 import '../../../core/audio/surah_audio_prefetcher.dart';
 import '../../../core/services/quran_sync_service.dart';
 import '../../hifz_engine/models/hifz_tier_model.dart';
@@ -227,13 +228,13 @@ class _SurahReaderScreenState extends ConsumerState<SurahReaderScreen> {
     );
   }
 
-  void _onWordTapped(int ayahNum, int wordIndex, String word) {
+  void _onWordTapped(int ayahNum, int wordPosition, String word) {
     final settings = ref.read(settingsProvider);
     WordMeaningSheet.show(
       context,
       surahNumber: widget.surah['number'] as int,
       ayahNumber: ayahNum,
-      wordPosition: wordIndex + 1, // 1-based index
+      wordPosition: wordPosition,
       fallbackArabicWord: word,
       activeScript: settings.activeScript,
     );
@@ -464,7 +465,7 @@ class _SurahReaderScreenState extends ConsumerState<SurahReaderScreen> {
     required bool isDark,
     required bool isActive,
   }) {
-    final words = rawArabic.trim().split(RegExp(r'\s+'));
+    final words = tokenizeQuranWords(rawArabic);
     final reciter = ref.read(settingsProvider).activeReciter;
 
     return Material(
@@ -503,9 +504,12 @@ class _SurahReaderScreenState extends ConsumerState<SurahReaderScreen> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     ...List.generate(words.length, (wIdx) {
-                      final word = words[wIdx];
+                      final token = words[wIdx];
+                      final word = token.text;
                       return InkWell(
-                        onTap: () => _onWordTapped(ayahNum, wIdx, word),
+                        onTap: token.wordPosition == null
+                            ? null
+                            : () => _onWordTapped(ayahNum, token.wordPosition!, word),
                         borderRadius: BorderRadius.circular(8),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 1),

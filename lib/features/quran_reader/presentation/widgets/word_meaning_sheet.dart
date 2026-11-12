@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../app/theme.dart';
+import '../../../../core/data/quran_word_tokens.dart';
 import '../../../../core/database/app_database.dart';
 import '../../../../core/network/ummah_api_client.dart';
 
@@ -64,11 +65,9 @@ class _WordMeaningSheetState extends State<WordMeaningSheet> {
     final db = AppDatabase.instance;
     // 1. Try local cache first
     final cached = await db.getCachedWords(widget.surahNumber, widget.ayahNumber);
-    if (cached.isNotEmpty) {
-      final match = cached.firstWhere(
-        (w) => (w['position'] as int) == widget.wordPosition,
-        orElse: () => cached.first,
-      );
+    final cachedMatch = findQuranWord(cached, widget.wordPosition);
+    if (cachedMatch != null) {
+      final match = cachedMatch;
       if (mounted) {
         setState(() {
           _arabic = match['arabic'] as String? ?? widget.fallbackArabicWord;
@@ -86,10 +85,16 @@ class _WordMeaningSheetState extends State<WordMeaningSheet> {
       final words = await client.fetchAyahWords(widget.surahNumber, widget.ayahNumber);
       if (words.isNotEmpty) {
         await db.cacheWords(widget.surahNumber, widget.ayahNumber, words);
-        final match = words.firstWhere(
-          (w) => (w['position'] as int? ?? 1) == widget.wordPosition,
-          orElse: () => words.first,
-        );
+        final match = findQuranWord(words, widget.wordPosition);
+        if (match == null) {
+          if (mounted) {
+            setState(() {
+              _errorMessage = 'Meaning unavailable for this word.';
+              _isLoading = false;
+            });
+          }
+          return;
+        }
 
         if (mounted) {
           setState(() {

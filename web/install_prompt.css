@@ -1,0 +1,49 @@
+#ios-install-guide {
+    position: fixed;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    left: 16px;
+    right: 16px;
+    z-index: 10000;
+    box-sizing: border-box;
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #c9ded6;
+    border-radius: 20px;
+    background: #f7fcf9;
+    color: #163d30;
+    box-shadow: 0 8px 32px #0003;
+    font: 15px/1.5 system-ui, sans-serif;
+}
+
+#ios-install-guide h2 {
+    margin: 0 0 8px;
+    font-size: 19px;
+}
+
+#ios-install-guide p {
+    margin: 8px 0;
+}
+
+#ios-install-guide ol {
+    padding-left: 22px;
+    margin: 12px 0;
+}
+
+#ios-install-guide button {
+    min-height: 44px;
+    width: 100%;
+    margin-top: 8px;
+    border: 0;
+    border-radius: 12px;
+    background: #17684d;
+    color: white;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#ios-install-guide button:focus-visible {
+    outline: 3px solid #448cff;
+    outline-offset: 3px;
+}
