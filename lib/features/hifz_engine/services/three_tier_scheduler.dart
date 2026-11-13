@@ -92,7 +92,8 @@ class ThreeTierScheduler {
       final oldManzilCount =
           prefs.getInt(AppConstants.keyManzilPortion) ?? _manzilRukuCount;
       final migratedSettings = HifzTierLengthSettings(
-        sabaqCount: const {5, 7, 10, 12, 15}.contains(oldSabaqCount)
+        sabaqCount:
+            HifzTierLengthSettings.sabaqAyahPresets.contains(oldSabaqCount)
             ? oldSabaqCount
             : 5,
         sabqiDays: const {5, 7, 10}.contains(oldSabqiDays) ? oldSabqiDays : 5,

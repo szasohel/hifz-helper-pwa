@@ -146,13 +146,8 @@ class _TierLengthSettingsSheetState extends State<_TierLengthSettingsSheet> {
                             setState(() {
                               _sabaqUnit = unit;
                               if (unit == HifzRangeUnit.ayah &&
-                                  !const {
-                                    5,
-                                    7,
-                                    10,
-                                    12,
-                                    15,
-                                  }.contains(_ayahCount)) {
+                                  !HifzTierLengthSettings.sabaqAyahPresets
+                                      .contains(_ayahCount)) {
                                 _ayahCount = 5;
                               }
                             });
@@ -164,7 +159,7 @@ class _TierLengthSettingsSheetState extends State<_TierLengthSettingsSheet> {
                         DropdownButtonFormField<int>(
                           initialValue: _ayahCount,
                           decoration: const InputDecoration(labelText: 'Ayahs'),
-                          items: const [5, 7, 10, 12, 15]
+                          items: HifzTierLengthSettings.sabaqAyahPresets
                               .map(
                                 (count) => DropdownMenuItem(
                                   value: count,

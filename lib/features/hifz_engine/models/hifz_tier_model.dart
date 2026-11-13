@@ -14,6 +14,8 @@ enum FluencyLevel {
 enum HifzRangeUnit { ayah, page, ruku, juz }
 
 class HifzTierLengthSettings {
+  static const List<int> sabaqAyahPresets = [2, 3, 5, 7, 10, 12, 15];
+
   final HifzRangeUnit sabaqUnit;
   final int sabaqCount;
   final int sabqiDays;
@@ -36,7 +38,7 @@ class HifzTierLengthSettings {
       throw ArgumentError('Sabaq must use Ayah, Page, or Ruku.');
     }
     if (sabaqUnit == HifzRangeUnit.ayah &&
-        !const {5, 7, 10, 12, 15}.contains(sabaqCount)) {
+        !sabaqAyahPresets.contains(sabaqCount)) {
       throw ArgumentError('Ayah-based Sabaq must use an available preset.');
     }
     if (!const {5, 7, 10}.contains(sabqiDays)) {
